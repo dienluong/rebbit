@@ -18,28 +18,42 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-function App(): JSX.Element {
-  return (
-    <Router>
-      <div className="App">
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-            Learn React
-          </a>
-          <Link to="/world">Hello!</Link>
-        </header>
-        <Switch>
-          <Route path="/world">
-            <h2>Hello World</h2>
-            <Link to="/">Goodbye!</Link>
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
+class App extends React.Component {
+  componentDidMount(): void {
+    const postsRef = firebase.database().ref('posts');
+
+    postsRef.on('value', (snapshot) => {
+      console.log('Updated value:', snapshot.val());
+      this.setState({
+        posts: snapshot.val(),
+        loading: false,
+      });
+    });
+  }
+
+  render(): React.ReactNode {
+    return (
+      <Router>
+        <div className="App">
+          <header className="App-header">
+            <p>
+              Edit <code>src/App.tsx</code> and save to reload.
+            </p>
+            <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
+              Learn React
+            </a>
+            <Link to="/world">Hello!</Link>
+          </header>
+          <Switch>
+            <Route path="/world">
+              <h2>Hello World</h2>
+              <Link to="/">Goodbye!</Link>
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
+  }
 }
 
 export default App;
