@@ -3,7 +3,19 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import * as firebase from 'firebase/app';
 import 'firebase/analytics';
-import 'firebase/firestore';
+import 'firebase/database';
+
+import Posts from '../Posts';
+
+// Types
+export interface PropsT {
+  children?: React.ReactNode;
+}
+
+type StateT = {
+  posts: Array<{ title: string }>;
+  loading: boolean;
+};
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_apiKey,
@@ -18,7 +30,14 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-class App extends React.Component {
+class App extends React.Component<PropsT, StateT> {
+  constructor(props: PropsT) {
+    super(props);
+    this.state = {
+      posts: [],
+      loading: false,
+    };
+  }
   componentDidMount(): void {
     const postsRef = firebase.database().ref('posts');
 
@@ -32,22 +51,29 @@ class App extends React.Component {
   }
 
   render(): React.ReactNode {
+    // console.log('children: ', this.props.children)
+    // this.props.children &&
+    // React.cloneElement(this.props.children as React.ReactElement, {
+    //   firebaseRef: firebase.database().ref('posts'),
+    //   posts: this.state.posts,
+    //   loading: this.state.loading,
+    // });
+
     return (
       <Router>
         <div className="App">
           <header className="App-header">
-            <p>
-              Edit <code>src/App.tsx</code> and save to reload.
-            </p>
-            <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-              Learn React
-            </a>
+            <h2>rebbit</h2>
             <Link to="/world">Hello!</Link>
           </header>
           <Switch>
             <Route path="/world">
               <h2>Hello World</h2>
-              <Link to="/">Goodbye!</Link>
+              <Link to="/posts">Posts</Link>
+            </Route>
+            <Route path="/posts">
+              <Posts {...this.state} />
+              <Link to="/">Home</Link>
             </Route>
           </Switch>
         </div>
