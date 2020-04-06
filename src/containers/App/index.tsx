@@ -5,7 +5,8 @@ import * as firebase from 'firebase/app';
 import 'firebase/analytics';
 import 'firebase/database';
 
-import Posts from '../Posts';
+import Posts, { PostsT } from '../Posts';
+import AddPost from '../AddPost';
 
 // Types
 export interface PropsT {
@@ -13,7 +14,7 @@ export interface PropsT {
 }
 
 type StateT = {
-  posts: Array<{ title: string }>;
+  posts: PostsT;
   loading: boolean;
 };
 
@@ -34,7 +35,7 @@ class App extends React.Component<PropsT, StateT> {
   constructor(props: PropsT) {
     super(props);
     this.state = {
-      posts: [],
+      posts: {},
       loading: false,
     };
   }
@@ -65,6 +66,7 @@ class App extends React.Component<PropsT, StateT> {
           <header className="App-header">
             <h2>rebbit</h2>
             <Link to="/world">Hello!</Link>
+            <AddPost firebaseRef={firebase.database().ref('posts')} />
           </header>
           <Switch>
             <Route path="/world">
